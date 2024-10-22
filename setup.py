@@ -1,1 +1,1 @@
-pip install . 
+python3 theapp.py
