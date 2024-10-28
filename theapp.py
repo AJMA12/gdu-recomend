@@ -89,7 +89,13 @@ class Query_By_Document(Resource):
 
         return lista_json
 
+class HelloWorld(Resource):
+    def get(self):
+        return {'hello': 'world'}
+
 api.add_resource(Query_By_Document, '/getInfoCI/<string:document>')
+
+api.add_resource(HelloWorld, '/')
 
 app.run(debug=False)
 
