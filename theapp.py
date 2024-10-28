@@ -55,9 +55,6 @@ info_segmentos_df = pd.DataFrame({'CustomerIdentificationCard': list(info_segmen
 
                                 
 
-class Query_By_Document(Resource):
-    
-
 @app.route('/hello')
 def get():
     return {'hello': 'world'}
@@ -99,8 +96,6 @@ def get(document):
     # print(lista_json)
 
     return lista_json
-
-
 
 
 app.run(debug=False)
