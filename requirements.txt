@@ -11,6 +11,7 @@ tzlocal==5.2
 Werkzeug==3.0.4
 scipy==1.14.1
 pandas==2.2.0
+pyarrow
 cmfrec
 numpy
 threadpoolctl
