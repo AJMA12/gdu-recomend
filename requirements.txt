@@ -10,3 +10,4 @@ rpy2==3.5.1
 tzlocal==5.2
 Werkzeug==3.0.4
 scipy==1.14.1
+pandas==1.5.3
