@@ -24,7 +24,10 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5001))
     app.run(host="0.0.0.0", port=port)
 
+print("Todo iniciado y corriendo. YASA")
+
 def load_rdata(file):
+    print("load_rdata. YASA")
     env = robjects.environments.Environment()
     robjects.r['load'](file, env)
     return {key: env[key] for key in env.keys()}
@@ -101,5 +104,5 @@ api.add_resource(HelloWorld, '/')
 
 app.run(debug=False)
 
-print("Todo iniciado y corriendo. YASA")
+
 
