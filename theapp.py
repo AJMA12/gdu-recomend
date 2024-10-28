@@ -20,6 +20,10 @@ from flask_restful import Resource, Api
 app = Flask(__name__)
 api = Api(app)
 
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5001))
+    app.run(host="0.0.0.0", port=port)
+
 def load_rdata(file):
     env = robjects.environments.Environment()
     robjects.r['load'](file, env)
