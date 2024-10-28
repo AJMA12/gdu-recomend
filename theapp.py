@@ -18,11 +18,10 @@ from flask import Flask
 from flask_restful import Resource, Api
 
 app = Flask(__name__)
-api = Api(app)
+# api = Api(app)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5001))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host='0.0.0.0', port=int(os.environ.get("PORT", 8080)))
 
 print("Todo iniciado y corriendo. YASA")
 
@@ -57,50 +56,52 @@ info_segmentos_df = pd.DataFrame({'CustomerIdentificationCard': list(info_segmen
                                 
 
 class Query_By_Document(Resource):
-    def get(self, document):
+    
 
-        t1 = datetime.now()
-        
-        cedula = document
+@app.route('/hello')
+def get():
+    return {'hello': 'world'}
 
-        matriz = lista_matrices[int(exp_df[exp_df['descripcion'] == info_segmentos_df.loc[info_segmentos_df['CustomerIdentificationCard'] == cedula, 'descripcion'].values[0]].index[0])]
+@app.route('/getInfoCI/<string:document>')
+def get(document):
 
-        # Busco Informacion de Productos y Cedulas dada una cedula concreta
-        
-        a_productos_1 = pd.DataFrame({'PRDCOD': list(robjects.r['colnames'](matriz))})
-        a_ci_1 = pd.DataFrame({'Cedula': list(list(robjects.r['rownames'](matriz))[0])})
+    t1 = datetime.now()
+    
+    cedula = document
 
-        # # Genero Productos Recomendados (modelo: ver si accedo a modelos generados o genero uno)
-        matriz_coo = coo_matrix((list(robjects.r['slot'](matriz, 'x')), (list(robjects.r['slot'](matriz, 'i')), list(robjects.r['slot'](matriz, 'j')))), shape=(robjects.r['dim'](matriz)[0], robjects.r['dim'](matriz)[1]))
+    matriz = lista_matrices[int(exp_df[exp_df['descripcion'] == info_segmentos_df.loc[info_segmentos_df['CustomerIdentificationCard'] == cedula, 'descripcion'].values[0]].index[0])]
 
-        modelo = CMF_implicit(k=4, alpha=75, verbose = False).fit(matriz_coo)
+    # Busco Informacion de Productos y Cedulas dada una cedula concreta
+    
+    a_productos_1 = pd.DataFrame({'PRDCOD': list(robjects.r['colnames'](matriz))})
+    a_ci_1 = pd.DataFrame({'Cedula': list(list(robjects.r['rownames'](matriz))[0])})
 
-        # # topN Propio
-        def topN_propio(modelo, user, n):
-                user_factors = modelo.A_[user]
-                item_factors = modelo.B_
-                scores = np.dot(item_factors, user_factors)
-                items_escogidos = np.argsort(scores)[::-1][:n]
-                return items_escogidos
+    # # Genero Productos Recomendados (modelo: ver si accedo a modelos generados o genero uno)
+    matriz_coo = coo_matrix((list(robjects.r['slot'](matriz, 'x')), (list(robjects.r['slot'](matriz, 'i')), list(robjects.r['slot'](matriz, 'j')))), shape=(robjects.r['dim'](matriz)[0], robjects.r['dim'](matriz)[1]))
 
-        lista_productos_recomendados = pd.DataFrame({'PRDCOD': a_productos_1.iloc[topN_propio(modelo,  int(a_ci_1.index[a_ci_1['Cedula'] == cedula][0]), 150)]['PRDCOD'].values})
-        # # JSon
-        lista_json = lista_productos_recomendados.to_json(orient='values') # orient='records', indent=0)
+    modelo = CMF_implicit(k=4, alpha=75, verbose = False).fit(matriz_coo)
 
-        t2 = datetime.now()
-        print(cedula, "time: ", t2-t1)
+    # # topN Propio
+    def topN_propio(modelo, user, n):
+            user_factors = modelo.A_[user]
+            item_factors = modelo.B_
+            scores = np.dot(item_factors, user_factors)
+            items_escogidos = np.argsort(scores)[::-1][:n]
+            return items_escogidos
 
-        # print(lista_json)
+    lista_productos_recomendados = pd.DataFrame({'PRDCOD': a_productos_1.iloc[topN_propio(modelo,  int(a_ci_1.index[a_ci_1['Cedula'] == cedula][0]), 150)]['PRDCOD'].values})
+    # # JSon
+    lista_json = lista_productos_recomendados.to_json(orient='values') # orient='records', indent=0)
 
-        return lista_json
+    t2 = datetime.now()
+    print(cedula, "time: ", t2-t1)
 
-class HelloWorld(Resource):
-    def get(self):
-        return {'hello': 'world'}
+    # print(lista_json)
 
-api.add_resource(Query_By_Document, '/getInfoCI/<string:document>')
+    return lista_json
 
-api.add_resource(HelloWorld, '/')
+
+
 
 app.run(debug=False)
 
