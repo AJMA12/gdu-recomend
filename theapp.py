@@ -64,8 +64,6 @@ class Query_By_Document(Resource):
 
         # Busco Informacion de Productos y Cedulas dada una cedula concreta
         
-        
-
         a_productos_1 = pd.DataFrame({'PRDCOD': list(robjects.r['colnames'](matriz))})
         a_ci_1 = pd.DataFrame({'Cedula': list(list(robjects.r['rownames'](matriz))[0])})
 
@@ -102,4 +100,6 @@ api.add_resource(Query_By_Document, '/getInfoCI/<string:document>')
 api.add_resource(HelloWorld, '/')
 
 app.run(debug=False)
+
+print("Todo iniciado y corriendo. YASA")
 
