@@ -1,7 +1,7 @@
 import os
 # os.environ['R_HOME'] = 'C:/Users/rmosteiro/AppData/Local/Programs/R/R-4.3.2'
 # JMV
-os.environ['R_HOME'] = '/Library/Frameworks/R.framework/Resources'
+# os.environ['R_HOME'] = '/Library/Frameworks/R.framework/Resources'
 
 import rpy2.robjects as robjects
 
