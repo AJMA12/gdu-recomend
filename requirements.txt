@@ -16,3 +16,4 @@ cmfrec
 numpy
 threadpoolctl
 flask_restful
+gunicorn
